@@ -5,7 +5,7 @@ import kotlin.random.Random
 class Matrix(private val values: Array<Array<Double>>) {
     val rows: Int = values.size
     val cols: Int = values.first().size
-    private val simpleMultiplicationThreshold: Int = 128
+    private val simpleMultiplicationThreshold: Int = 1024
 
     /**
      * Constructor that creates a matrix with the given number of rows and columns,
@@ -28,18 +28,15 @@ class Matrix(private val values: Array<Array<Double>>) {
     operator fun times(other: Matrix): Matrix {
         require(cols == other.rows) { "Invalid matrix multiplication: ${this.cols} != ${other.rows}" }
 
-        if (rows <= simpleMultiplicationThreshold) {
+        if (rows <= simpleMultiplicationThreshold || cols <= simpleMultiplicationThreshold) {
             return simpleMultiplication(other)
         }
 
         val origRows = rows
-        val origCols = cols
+        val origCols = other.cols
 
-        val a = this.squarify()
-        val b = other.squarify()
-
-        val aParts = a.split()
-        val bParts = b.split()
+        val aParts = this.squarify().split()
+        val bParts = other.squarify().split()
 
         val m = arrayOf(
             (aParts[0][0] + aParts[1][1]) * (bParts[0][0] + bParts[1][1]),
@@ -254,6 +251,17 @@ class Matrix(private val values: Array<Array<Double>>) {
         return this
     }
 
+    fun transpose(): Matrix {
+        val result = Matrix(cols, rows)
+        for (i in 0 until cols) {
+            for (j in 0 until rows) {
+                result.values[i][j] = values[j][i]
+            }
+        }
+
+        return result
+    }
+
     /**
      * Applies a function to each element of the matrix.
      * @param func: A function from Double to Double.
@@ -265,6 +273,17 @@ class Matrix(private val values: Array<Array<Double>>) {
         }
 
         return this
+    }
+
+    override fun toString(): String {
+        var str = ""
+        for (i in 0 until rows) {
+            str += '\n'
+            for (j in 0 until cols) {
+                str += values[i][j].toString()
+            }
+        }
+        return str
     }
 
     /**

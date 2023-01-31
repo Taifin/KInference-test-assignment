@@ -21,7 +21,8 @@ fun reLU(x: Double): Double = max(0.0, x)
 fun sigmoid(x: Double): Double = 1 / (1 + Math.E.pow(x))
 
 fun calculateSingleLayer(nodes: Matrix, weights: Matrix, bias: Matrix, function: (Double) -> Double): Matrix {
-    return (nodes * weights + bias).applyFunction(function)
+    val weighted = weights * nodes
+    return (weighted + bias).applyFunction(function)
 }
 
 fun inferenceProcess(inputNodes: Matrix, params: NetworkParams): Matrix {
@@ -35,6 +36,10 @@ fun inferenceProcess(inputNodes: Matrix, params: NetworkParams): Matrix {
     }
     return currentLayer
 }
+/*
+2048x2048 * 2048x1 = 2048x1 + 2048x1 = 2048x1
+2048x2048 * 2048x1
+ */
 
 // Input matrix interpreted as a single vector of values
 fun readInput(inFile: File): Matrix {
@@ -42,7 +47,7 @@ fun readInput(inFile: File): Matrix {
     for (line in inFile.readLines()) {
         list += line.split(" ").map { it.toDouble() }
     }
-    return Matrix(arrayOf(list.toTypedArray()))
+    return Matrix(arrayOf(list.toTypedArray())).transpose()
 }
 
 class Args(parser: ArgParser) {
