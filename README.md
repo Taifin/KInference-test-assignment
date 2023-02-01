@@ -1,6 +1,6 @@
 # KInference-test-assignment
 
-This is a test assignment for JetBrains KInference project to perform forward propagation for a trained neural network.
+This is a test assignment for JetBrains KInference project to perform inference process for a trained neural network.
 This program uses Strassen's algorithm for large computational graphs.
 
 ### Usage
