@@ -5,7 +5,7 @@ import kotlin.random.Random
 class Matrix(private val values: Array<Array<Double>>) {
     val rows: Int = values.size
     val cols: Int = values.first().size
-    private val simpleMultiplicationThreshold: Int = 1024
+    private val simpleMultiplicationThreshold: Int = 2048
 
     /**
      * Constructor that creates a matrix with the given number of rows and columns,
@@ -38,28 +38,35 @@ class Matrix(private val values: Array<Array<Double>>) {
         val aParts = this.squarify().split()
         val bParts = other.squarify().split()
 
-        val m = arrayOf(
-            (aParts[0][0] + aParts[1][1]) * (bParts[0][0] + bParts[1][1]),
-            (aParts[1][0] + aParts[1][1]) * bParts[0][0],
-            aParts[0][0] * (bParts[0][1] - bParts[1][1]),
-            aParts[1][1] * (bParts[1][0] - bParts[0][0]),
-            (aParts[0][0] + aParts[0][1]) * bParts[1][1],
-            (aParts[1][0] - aParts[0][0]) * (bParts[0][0] + bParts[0][1]),
-            (aParts[0][1] - aParts[1][1]) * (bParts[1][0] + bParts[1][1])
-        )
+        val c = Array(2) { arrayOfNulls<Matrix>(2) }
+        var mult = (aParts[0][0] + aParts[1][1]) * (bParts[0][0] + bParts[1][1])
+        c[0][0] = mult
+        c[1][1] = mult
 
-        val c = arrayOf(
-            arrayOf(
-                m[0] + m[3] - m[4] + m[6],
-                m[2] + m[4]
-            ),
-            arrayOf(
-                m[1] + m[3],
-                m[0] - m[1] + m[2] + m[5]
-            )
-        )
+        mult = (aParts[1][0] + aParts[1][1]) * bParts[0][0]
+        c[1][0] = mult
+        c[1][1] = c[1][1]!!.minus(mult)
 
-        return merge(c).unsqarify(origRows, origCols)
+        mult = aParts[0][0] * (bParts[0][1] - bParts[1][1])
+        c[0][1] = mult
+        c[1][1] = c[1][1]!!.plus(mult)
+
+        mult = aParts[1][1] * (bParts[1][0] - bParts[0][0])
+        c[0][0] = c[0][0]!!.plus(mult)
+        c[1][0] = c[1][0]!!.plus(mult)
+
+        mult = (aParts[0][0] + aParts[0][1]) * bParts[1][1]
+        c[0][0] = c[0][0]?.minus(mult)
+        c[0][1] = c[0][1]?.plus(mult)
+
+        mult = (aParts[1][0] - aParts[0][0]) * (bParts[0][0] + bParts[0][1])
+        c[1][1] = c[1][1]?.plus(mult)
+
+        mult = (aParts[0][1] - aParts[1][1]) * (bParts[1][0] + bParts[1][1])
+        c[0][0] = c[0][0]?.plus(mult)
+
+        @Suppress("UNCHECKED_CAST")
+        return merge(c as Array<Array<Matrix>>).unsqarify(origRows, origCols)
     }
 
     private fun elementwiseBinaryOp(other: Matrix, func: (Double, Double) -> Double): Matrix {
