@@ -2,6 +2,7 @@ import java.lang.Double.max
 import kotlin.math.pow
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
+import com.xenomachina.argparser.mainBody
 import java.io.File
 
 data class NetworkParams(
@@ -59,7 +60,7 @@ class Args(parser: ArgParser) {
     )
 }
 
-fun main(args: Array<String>) {
+fun main(args: Array<String>) = mainBody {
 
     ArgParser(args).parseInto(::Args).run {
         val params = NetworkParams(listOf(::reLU, ::sigmoid), sizes, Pair(0.0, 10.0))

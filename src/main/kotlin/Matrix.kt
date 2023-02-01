@@ -275,11 +275,12 @@ class Matrix(private val values: Array<Array<Double>>) {
      * @return: The matrix after applying the function to each of its elements.
      */
     fun applyFunction(func: (Double) -> Double): Matrix {
-        for (row in this.values) {
-            row.forEach { func(it) }
+        val result = Matrix(rows, cols)
+        for (i in 0 until rows) {
+            result.values[i] = values[i].map { func(it) }.toTypedArray()
         }
 
-        return this
+        return result
     }
 
     override fun toString(): String {
