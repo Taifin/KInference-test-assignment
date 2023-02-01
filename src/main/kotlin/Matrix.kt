@@ -5,7 +5,9 @@ import kotlin.random.Random
 class Matrix(private val values: Array<Array<Double>>) {
     val rows: Int = values.size
     val cols: Int = values.first().size
-    private val simpleMultiplicationThreshold: Int = 2048
+    companion object StaticParams {
+        val simpleMultiplicationThreshold: Int = 2048
+    }
 
     /**
      * Constructor that creates a matrix with the given number of rows and columns,
